@@ -38,14 +38,76 @@ Add to `claude_desktop_config.json`:
 
 ## Tools
 
-| Tool | Ask your agent... | What it returns |
-|------|-------------------|-----------------|
-| `mtrkr_resolve_name` | "What address is mirage.mega?" | Resolves .mega names to addresses (and reverse) via on-chain MegaNames contract |
-| `mtrkr_wallet_quick_stats` | "How active is 0x1234...abcd over the last 90 days?" | Transaction counts (in/out/total) over a configurable time range |
-| `mtrkr_token_scan` | "Is token 0x021e...782B safe?" | Contract analysis, liquidity depth, DEX data, 24h activity, risk scoring |
-| `mtrkr_security_scan` | "Does mirage.mega have risky approvals?" | Open ERC-20 approvals + NFT operators with risk levels (safe/warning/critical) |
-| `mtrkr_decode_transaction` | "What did transaction 0xf9b5...3e2a do?" | Method name, decoded params, token transfers, emitted events |
-| `mtrkr_eth_price` | "What's the ETH price on MegaETH?" | ETH/USD from RedStone on-chain oracle (CoinGecko fallback) |
+### mtrkr_resolve_name
+
+Resolve a .mega name to a wallet address, or a wallet address to its primary .mega name. Uses MegaNames on-chain contract resolution.
+
+**Try asking:**
+- "What address is bankai.mega?"
+- "Does 0x1234...abcd have a .mega name?"
+- "Resolve vitalik.mega"
+
+### mtrkr_wallet_quick_stats
+
+Get a quick summary of wallet activity on MegaETH: transaction counts (in/out/total) over a configurable time range (1-365 days).
+
+**Try asking:**
+- "How active is 0x1234...abcd over the last 90 days?"
+- "How many transactions has bankai.mega sent this week?"
+- "Compare inbound vs outbound tx count for 0xdead...beef in the last 30 days"
+
+### mtrkr_token_scan
+
+Comprehensive ERC-20 token risk analysis across 5 domains: control, exit, liquidity, economic, and integrity.
+
+**The scan includes:**
+- **Verdict** — risk score (0-100), overall risk level, recommendation (avoid/caution/low_risk), and a one-sentence tldr
+- **Sell simulation** — can you actually sell this token? Detects blocked transfer paths and honeypot behavior
+- **Admin powers** — mint, pause, blacklist, fee-setting, ownership transfer capabilities
+- **Proxy analysis** — upgrade pattern detection (EIP-1967/1167), implementation address, upgradeability risk
+- **Holder concentration** — top 10 holders with percentages, pool/owner flags
+- **Curation status** — MegaETH Foundation curated token list membership
+- **Source verification** — Blockscout verified source code, contract name, compiler version
+- **Trading activity** — 24h buy/sell counts, USD volume, price change
+- **Pricing** — current price, market cap, FDV, liquidity depth
+- **Findings** — individual risk factors with severity, confidence, domain, and evidence
+
+**Try asking:**
+- "Is token 0x021e...782B safe to buy?"
+- "Can I sell 0xabcd...1234? Check for honeypot"
+- "What are the risk factors for 0xdead...beef?"
+- "Who are the top holders of 0x021e...782B?"
+- "Does 0xabcd...1234 have admin mint or pause powers?"
+- "Is 0xdead...beef on the MegaETH curated token list?"
+
+### mtrkr_security_scan
+
+Scan a wallet for open ERC-20 token approvals and NFT operator permissions. Returns each approval with risk level (safe/warning/critical), spender identification, and allowance amounts. Uses full historical indexing so no approvals are missed.
+
+**Try asking:**
+- "Does bankai.mega have risky approvals?"
+- "List all infinite approvals for 0x1234...abcd"
+- "Are there any critical-risk token approvals on 0xdead...beef?"
+- "How many unknown spenders does this wallet have approved?"
+
+### mtrkr_decode_transaction
+
+Decode a MegaETH transaction into human-readable format: method name, decoded parameters, token transfers, emitted events, and contract info. Works for both recent and historical transactions.
+
+**Try asking:**
+- "What did transaction 0xf9b5...3e2a do?"
+- "Decode 0xabcd...1234 — was it a swap?"
+- "Show me the token transfers in tx 0xdead...beef"
+- "What method was called in transaction 0x9876...5432?"
+
+### mtrkr_eth_price
+
+Get the current ETH/USD price on MegaETH. Uses RedStone on-chain oracle when available, falls back to CoinGecko.
+
+**Try asking:**
+- "What's the current ETH price on MegaETH?"
+- "ETH price?"
+- "How much is 5 ETH worth in USD right now?"
 
 ---
 
@@ -60,7 +122,7 @@ Everything below is for contributors and developers building on the MCP server.
 ### Build
 
 ```bash
-git clone https://github.com/user/mtrkr-mcp-server
+git clone https://github.com/n1n4du/mtrkr-mcp-server
 cd mtrkr-mcp-server
 npm install
 npm run build
@@ -70,6 +132,12 @@ npm run build
 
 ```bash
 npx @modelcontextprotocol/inspector node dist/index.js
+```
+
+To test against a local MTRKR instance:
+
+```bash
+MTRKR_API_URL=http://localhost:3000 npm start
 ```
 
 ### Environment Variables
@@ -93,3 +161,12 @@ src/
     └── register.ts       # Tool module registration
 ```
 
+### Adding More Tools
+
+The codebase supports 31 additional MTRKR endpoints across wallet analytics, DeFi positions, NFTs, badges, and market data. To add a new tool:
+
+1. Create or edit a file in `src/tools/`
+2. Define input schema with Zod
+3. Write a clear description — this is what the AI reads to decide when to use the tool
+4. Import and register in `src/index.ts`
+5. Rebuild with `npm run build`

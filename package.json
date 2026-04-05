@@ -4,7 +4,7 @@
   "description": "MCP server exposing MTRKR wallet intelligence tools for MegaETH",
   "type": "module",
   "bin": {
-    "mtrkr-mcp": "./dist/index.js"
+    "mtrkr-mcp": "dist/index.js"
   },
   "files": [
     "dist"
