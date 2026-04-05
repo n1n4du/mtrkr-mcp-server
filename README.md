@@ -100,6 +100,31 @@ Decode a MegaETH transaction into human-readable format: method name, decoded pa
 - "Show me the token transfers in tx 0xdead...beef"
 - "What method was called in transaction 0x9876...5432?"
 
+### mtrkr_inspect_address
+
+Deep inspection of any address on MegaETH. Determines if it's an EOA (wallet) or contract, with full analysis for contracts.
+
+**For all addresses:**
+- Address type (EOA vs contract), ETH balance (wei/ETH/USD), transaction count
+- Known contract registry lookup (label, category, tags)
+- Risk assessment (safe/low/medium/high/critical) with reasons
+
+**For contracts:**
+- Bytecode size and hash, proxy detection (EIP-1967, EIP-1167 clones, Beacon)
+- Implementation address and proxy admin
+- Deployer, owner, creation timestamp
+- Blockscout source verification (contract name, compiler version)
+- Token standard detection (ERC-20/721/1155) with name, symbol, decimals, totalSupply
+- Fake/clone detection via bytecode hash matching against known contracts
+
+**Try asking:**
+- "Is 0x1234...abcd a wallet or a contract?"
+- "Inspect 0xdead...beef — is it a proxy?"
+- "Who deployed contract 0x5B42...d997?"
+- "Is 0xabcd...1234 source-verified on Blockscout?"
+- "What token standard does 0x021e...782B implement?"
+- "Is this contract a fake clone?"
+
 ### mtrkr_eth_price
 
 Get the current ETH/USD price on MegaETH. Uses RedStone on-chain oracle when available, falls back to CoinGecko.
@@ -147,7 +172,7 @@ src/
 ├── index.ts              # Server setup + stdio transport
 ├── tools/
 │   ├── identity.ts       # mtrkr_resolve_name
-│   ├── wallet.ts         # mtrkr_wallet_quick_stats, mtrkr_security_scan
+│   ├── wallet.ts         # mtrkr_wallet_quick_stats, mtrkr_security_scan, mtrkr_inspect_address
 │   ├── token.ts          # mtrkr_token_scan, mtrkr_eth_price
 │   └── transaction.ts    # mtrkr_decode_transaction
 └── utils/

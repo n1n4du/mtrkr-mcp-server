@@ -49,4 +49,27 @@ export default function registerWalletTools(server: McpServer): void {
       return toolResult(data);
     },
   );
+
+  server.tool(
+    "mtrkr_inspect_address",
+    "Inspect any address on MegaETH: determines if it's an EOA (wallet) or " +
+      "contract, shows ETH balance (wei/ETH/USD), and transaction count. " +
+      "For contracts: bytecode size, proxy detection (EIP-1967/1167/Beacon) " +
+      "with implementation address and admin, deployer, owner, creation date, " +
+      "Blockscout source verification (contract name, compiler), and token " +
+      "standard detection (ERC-20/721/1155 with name/symbol/decimals/supply). " +
+      "Checks against a known contracts registry for labels and categories. " +
+      "Detects fake/cloned contracts via bytecode hash matching. " +
+      "Returns a risk assessment (safe/low/medium/high/critical) with reasons.",
+    {
+      address: z
+        .string()
+        .regex(ADDRESS_RE)
+        .describe("Address to inspect (0x...)"),
+    },
+    async ({ address }) => {
+      const data = await fetchMtrkr(`/api/v1/addresses/${address}/inspect`);
+      return toolResult(data);
+    },
+  );
 }
