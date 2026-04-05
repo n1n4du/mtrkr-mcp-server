@@ -43,9 +43,9 @@ Add to `claude_desktop_config.json`:
 Resolve a .mega name to a wallet address, or a wallet address to its primary .mega name. Uses MegaNames on-chain contract resolution.
 
 **Try asking:**
-- "What address is bankai.mega?"
+- "What address is mirage.mega?"
 - "Does 0x1234...abcd have a .mega name?"
-- "Resolve vitalik.mega"
+- "Resolve mirage.mega"
 
 ### mtrkr_wallet_quick_stats
 
@@ -53,7 +53,7 @@ Get a quick summary of wallet activity on MegaETH: transaction counts (in/out/to
 
 **Try asking:**
 - "How active is 0x1234...abcd over the last 90 days?"
-- "How many transactions has bankai.mega sent this week?"
+- "How many transactions has mirage.mega sent this week?"
 - "Compare inbound vs outbound tx count for 0xdead...beef in the last 30 days"
 
 ### mtrkr_token_scan
@@ -85,7 +85,7 @@ Comprehensive ERC-20 token risk analysis across 5 domains: control, exit, liquid
 Scan a wallet for open ERC-20 token approvals and NFT operator permissions. Returns each approval with risk level (safe/warning/critical), spender identification, and allowance amounts. Uses full historical indexing so no approvals are missed.
 
 **Try asking:**
-- "Does bankai.mega have risky approvals?"
+- "Does mirage.mega have risky approvals?"
 - "List all infinite approvals for 0x1234...abcd"
 - "Are there any critical-risk token approvals on 0xdead...beef?"
 - "How many unknown spenders does this wallet have approved?"
@@ -134,12 +134,6 @@ npm run build
 npx @modelcontextprotocol/inspector node dist/index.js
 ```
 
-To test against a local MTRKR instance:
-
-```bash
-MTRKR_API_URL=http://localhost:3000 npm start
-```
-
 ### Environment Variables
 
 | Variable | Default | Description |
@@ -161,12 +155,4 @@ src/
     └── register.ts       # Tool module registration
 ```
 
-### Adding More Tools
 
-The codebase supports 31 additional MTRKR endpoints across wallet analytics, DeFi positions, NFTs, badges, and market data. To add a new tool:
-
-1. Create or edit a file in `src/tools/`
-2. Define input schema with Zod
-3. Write a clear description — this is what the AI reads to decide when to use the tool
-4. Import and register in `src/index.ts`
-5. Rebuild with `npm run build`
