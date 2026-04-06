@@ -17,7 +17,7 @@ Add to `.cursor/mcp.json` (project-level) or global MCP settings:
   "mcpServers": {
     "mtrkr": {
       "command": "npx",
-      "args": ["mtrkr-mcp-server"]
+      "args": ["mtrkr-mcp-server@1.1.0"]
     }
   }
 }
@@ -32,7 +32,7 @@ Add to `claude_desktop_config.json`:
   "mcpServers": {
     "mtrkr": {
       "command": "npx",
-      "args": ["mtrkr-mcp-server"]
+      "args": ["mtrkr-mcp-server@1.1.0"]
     }
   }
 }
