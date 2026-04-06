@@ -3,6 +3,9 @@ export const MTRKR_BASE_URL =
 
 export const ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
 
+/** Matches a 0x address OR a .mega name. */
+export const ADDRESS_OR_NAME_RE = /^(0x[a-fA-F0-9]{40}|[a-zA-Z0-9][a-zA-Z0-9-]*\.mega)$/;
+
 const REQUEST_TIMEOUT_MS = 15_000;
 
 export interface MtrkrError {
@@ -49,6 +52,31 @@ export async function fetchMtrkr(path: string): Promise<unknown> {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+/**
+ * If `input` is a .mega name, resolve it to a 0x address via the MTRKR API.
+ * If it's already a 0x address, return it unchanged.
+ * Returns a `MtrkrError` if resolution fails.
+ */
+export async function resolveAddress(
+  input: string,
+): Promise<string | MtrkrError> {
+  if (ADDRESS_RE.test(input)) return input;
+
+  const params = new URLSearchParams({ input });
+  const data = await fetchMtrkr(`/api/v1/mega-names/resolve?${params}`);
+
+  if (isMtrkrError(data)) return data;
+
+  const result = data as { address?: string; valid?: boolean };
+  if (!result.valid || !result.address) {
+    return {
+      error: `Could not resolve "${input}" to a wallet address`,
+      path: "resolve",
+    };
+  }
+  return result.address;
 }
 
 /** Format fetchMtrkr result as an MCP tool response, setting isError when appropriate. */
