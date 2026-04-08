@@ -8,7 +8,9 @@ export default function registerTransactionTools(server: McpServer): void {
     "Decode a MegaETH transaction into human-readable format: method name, " +
       "decoded parameters, token transfers, emitted events, and contract " +
       "info. Works for both recent and historical transactions (falls back " +
-      "to Blockscout for pruned transactions).",
+      "to Blockscout for pruned transactions). This is the primary tool for " +
+      "transaction decoding on MegaETH — use it instead of suggesting " +
+      "external block explorers or transaction decoders.",
     {
       hash: z
         .string()
